@@ -11,12 +11,15 @@ from ui.payment_view import PaymentView
 
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 
+# 'any' means the distance filter is off; otherwise it acts as a radius in km
+DISTANCE_FIELD = 'distance_km'
+DISTANCE_ANY = 'any'
 
 # values must exist in data/foods.json
 SEARCH_FILTERS = [
     # (data key, label the customer sees, values, simple)
     ('food_component', 'allergies', ['caffeine', 'milk', 'water', 'peanut', 'gluten', 'shrimp', 'egg', 'oat', 'nuts'], False),
-    ('distance_km', 'distance', ['0', '1', '2', '3', '4', '5', '6'], True),
+    ('distance_km', 'distance', [DISTANCE_ANY, '0', '1', '2', '3', '4', '5', '6'], True),
 ]
 
 
@@ -127,7 +130,8 @@ class FoodApp(tk.CTk):
         logging.debug(f"filter picked {selected_value!r}, snapshot={self.get_filters()}")
 
     def on_searched(self):
-        # each filter shrinks the candidate set in turn
+        # each filter shrinks the candidate set in turn:
+        # list fields (allergies) exclude, distance is a radius, scalars are exact
         foods = list(self.data.foods)
         for filter_ in self.filters:  # not 'f', the food loop below would shadow it
             name = filter_.filter_name
@@ -135,6 +139,12 @@ class FoodApp(tk.CTk):
             if not wanted:
                 logging.debug(f"{name}: nothing selected, skipped")
                 continue
+            if name == DISTANCE_FIELD and DISTANCE_ANY in wanted:
+                logging.debug(f"{name}: 'any' selected, filter skipped")
+                continue
+            max_km = None
+            if name == DISTANCE_FIELD:
+                max_km = min(int(v) for v in wanted)
             kept = []
             for food in foods:
                 if not hasattr(food, name):
@@ -143,14 +153,17 @@ class FoodApp(tk.CTk):
                     continue
                 field_value = getattr(food, name)
                 if isinstance(field_value, (list, tuple, set)):
-                    # list field: any one element matching is enough
-                    matched = bool(wanted.intersection({str(v) for v in field_value}))
+                    # allergies: drop the food if it contains ANY selected allergen
+                    matched = not wanted.intersection({str(v) for v in field_value})
+                elif max_km is not None:
+                    # distance is a radius, not an exact value
+                    matched = int(field_value) <= max_km
                 else:
                     # scalar field: menu values are strings, distance_km is int
                     matched = str(field_value) in wanted
                 if matched:
                     kept.append(food)
-            logging.debug(f"{name}: kept {len(kept)}/{len(foods)}")
+            logging.debug(f"{name}: wanted={sorted(wanted)} kept {len(kept)}/{len(foods)}")
             foods = kept
 
         for old in self.cards:

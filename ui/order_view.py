@@ -129,7 +129,7 @@ class OrderDetailView(tk.CTkFrame):
             f"Wait: {food.wait_text}",
             f"Distance: {food.distance_text}",
             f"Tags: {food.tag_str or '-'}",
-            f"Ingredients: {', '.join(food.food_component) if food.food_component else '-'}",
+            f"Contains: {', '.join(food.food_component) if food.food_component else '-'}",
         ]
         if food.extra_price_info:
             info_lines.append(f"Extras: {food.extra_price_info}")
