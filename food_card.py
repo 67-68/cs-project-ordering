@@ -34,11 +34,11 @@ class PolishedFoodCard(tk.CTkFrame):
         master: Any,
         food_id: int,
         title: str,
-        tag_str: str,           # e.g. "低咖啡因"
+        tag_str: str,           # e.g. "low caffeine"
         wait_mins: int,         # 32 -> "32min"
         distance_km: int,       # 32 -> "32km"
         base_price: int,        # 32 -> "32¥"
-        extra_price_info: str,  # e.g. "to 52$(配料)"
+        extra_price_info: str,  # e.g. "to 52¥ (extra)"
         crowd_color: str,       # crowd badge hex
         on_order_click: Callable[[int], None]
     ):

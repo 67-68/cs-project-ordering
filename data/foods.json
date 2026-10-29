@@ -2,95 +2,95 @@
   "foods": [
     {
       "food_id": 1,
-      "title": "美式咖啡",
-      "tag_str": "低咖啡因",
+      "title": "Americano",
+      "tag_str": "low caffeine",
       "wait_mins": 8,
       "distance_km": 1,
       "base_price": 18,
-      "extra_price_info": "to 26¥(加奶)",
+      "extra_price_info": "to 26¥ (extra milk)",
       "crowd_color": "#34C759",
-      "food_component": ["咖啡因", "水"]
+      "food_component": ["caffeine", "water"]
     },
     {
       "food_id": 2,
-      "title": "拿铁",
+      "title": "Latte",
       "tag_str": "",
       "wait_mins": 15,
       "distance_km": 2,
       "base_price": 26,
-      "extra_price_info": "to 32¥(换燕麦奶)",
+      "extra_price_info": "to 32¥ (swap to oat milk)",
       "crowd_color": "#FF9F0A",
-      "food_component": ["咖啡因", "牛奶"]
+      "food_component": ["caffeine", "milk"]
     },
     {
       "food_id": 3,
-      "title": "手冲耶加雪菲",
-      "tag_str": "浅烘",
+      "title": "Pour-over Yirgacheffe",
+      "tag_str": "light roast",
       "wait_mins": 32,
       "distance_km": 5,
       "base_price": 42,
       "extra_price_info": "",
       "crowd_color": "#FF3B30",
-      "food_component": ["咖啡因"]
+      "food_component": ["caffeine"]
     },
     {
       "food_id": 4,
-      "title": "冷萃",
-      "tag_str": "冰",
+      "title": "Cold Brew",
+      "tag_str": "iced",
       "wait_mins": 3,
       "distance_km": 1,
       "base_price": 30,
       "extra_price_info": "",
       "crowd_color": "#34C759",
-      "food_component": ["咖啡因", "水"]
+      "food_component": ["caffeine", "water"]
     },
     {
       "food_id": 5,
-      "title": "燕麦奶拿铁",
-      "tag_str": "植物基",
+      "title": "Oat Milk Latte",
+      "tag_str": "plant based",
       "wait_mins": 12,
       "distance_km": 3,
       "base_price": 32,
-      "extra_price_info": "to 38¥(双份浓缩)",
+      "extra_price_info": "to 38¥ (double shot)",
       "crowd_color": "#FF9F0A",
-      "food_component": ["咖啡因", "燕麦", "坚果"]
+      "food_component": ["caffeine", "oat", "nuts"]
     },
     {
       "food_id": 6,
-      "title": "花生酱厚吐司",
-      "tag_str": "高热量",
+      "title": "Peanut Butter Toast",
+      "tag_str": "high calorie",
       "wait_mins": 5,
       "distance_km": 1,
       "base_price": 15,
       "extra_price_info": "",
       "crowd_color": "#34C759",
-      "food_component": ["花生", "麸质"]
+      "food_component": ["peanut", "gluten"]
     },
     {
       "food_id": 7,
-      "title": "鲜虾云吞面",
-      "tag_str": "现煮",
+      "title": "Shrimp Wonton Noodles",
+      "tag_str": "made to order",
       "wait_mins": 20,
       "distance_km": 4,
       "base_price": 28,
-      "extra_price_info": "to 34¥(加云吞)",
+      "extra_price_info": "to 34¥ (extra wonton)",
       "crowd_color": "#FF9F0A",
-      "food_component": ["虾", "麸质", "蛋"]
+      "food_component": ["shrimp", "gluten", "egg"]
     },
     {
       "food_id": 8,
-      "title": "超长名字测试用特制冰镇抹茶拿铁",
-      "tag_str": "限量",
+      "title": "Super Long Name Test Iced Matcha Latte",
+      "tag_str": "limited",
       "wait_mins": 25,
       "distance_km": 6,
       "base_price": 38,
-      "extra_price_info": "to 45¥(加浓缩)",
+      "extra_price_info": "to 45¥ (extra shot)",
       "crowd_color": "#FF3B30",
-      "food_component": ["咖啡因", "牛奶"]
+      "food_component": ["caffeine", "milk"]
     },
     {
       "food_id": 9,
-      "title": "白开水",
+      "title": "Plain Water",
       "tag_str": "",
       "wait_mins": 0,
       "distance_km": 0,
@@ -101,14 +101,14 @@
     },
     {
       "food_id": 10,
-      "title": "无糖气泡水",
-      "tag_str": "零卡",
+      "title": "Sparkling Water",
+      "tag_str": "zero calorie",
       "wait_mins": 2,
       "distance_km": 1,
       "base_price": 6,
       "extra_price_info": "",
       "crowd_color": "#34C759",
-      "food_component": ["水"]
+      "food_component": ["water"]
     }
   ],
   "coupons": [

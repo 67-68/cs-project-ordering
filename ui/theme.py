@@ -5,10 +5,10 @@ Module level on purpose: several views share one palette.
 """
 
 # hardcoded until there is a backend
-PAYMENT_METHODS = ['Apple Pay', '微信支付', '支付宝', '银行卡', '校园卡']
+PAYMENT_METHODS = ['Apple Pay', 'WeChat Pay', 'Alipay', 'Bank Card', 'Campus Card']
 
 # sentinel for "no coupon", so the literal is not scattered around
-NO_COUPON = '不使用优惠券'
+NO_COUPON = "don't use coupon"
 
 PAGE_BG = ("#EFEFF4", "#141419")        # slightly darker than cards
 TITLE_BAR_BG = ("#FFFFFF", "#23232B")

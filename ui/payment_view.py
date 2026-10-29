@@ -196,7 +196,7 @@ class PaymentView(tk.CTkFrame):
 
         food = self._state['food']
         if food is not None:
-            self.wait_label.configure(text=f"{method or '未选择支付方式'} · 预计等待 {food.wait_text}")
+            self.wait_label.configure(text=f"{method or 'no payment method'} · expected wait {food.wait_text}")
         else:
             logging.warning("no food loaded, only amounts refreshed")
 

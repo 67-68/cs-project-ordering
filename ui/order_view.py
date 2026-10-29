@@ -55,7 +55,7 @@ class OrderDetailView(tk.CTkFrame):
         self.big_title.grid(row=0, column=0, sticky='w', padx=(16, 8), pady=14)
 
         self.rate_btn = tk.CTkButton(
-            master=self.title_row, text='⭐ 评价', width=110, height=46,
+            master=self.title_row, text='⭐ Rate', width=110, height=46,
             font=tk.CTkFont(size=15, weight='bold'),
             corner_radius=10,
             fg_color=("#E9E9EF", "#2E2E38"),
@@ -66,7 +66,7 @@ class OrderDetailView(tk.CTkFrame):
         self.rate_btn.grid(row=0, column=1, padx=(8, 6), pady=14, sticky='e')
 
         self.pay_btn = tk.CTkButton(
-            master=self.title_row, text='💳 支付', width=110, height=46,
+            master=self.title_row, text='💳 Pay', width=110, height=46,
             font=tk.CTkFont(size=16, weight='bold'),
             corner_radius=10,
             command=self._on_pay_click,
@@ -74,11 +74,11 @@ class OrderDetailView(tk.CTkFrame):
         self.pay_btn.grid(row=0, column=2, padx=(0, 16), pady=14, sticky='e')
 
         # row1 / row2: two cards
-        self.info_shell, self.info_body = self._build_card(self, '📋 基本信息', CARD_INFO_BG)
+        self.info_shell, self.info_body = self._build_card(self, '📋 Basic info', CARD_INFO_BG)
         self.info_shell.grid(row=1, column=0, sticky='nsew', padx=10, pady=(0, 6))
 
         self.dine_shell, self.dine_body = self._build_card(
-            self, '🍽️ 堂食 / 餐厅信息 (At Restaurant)', CARD_DINE_BG,
+            self, '🍽️ Dine-in / Restaurant info', CARD_DINE_BG,
         )
         self.dine_shell.grid(row=2, column=0, sticky='nsew', padx=10, pady=(0, 10))
         logging.debug(f"{_tag} order view ready, on_pay={on_pay is not None}")
@@ -125,18 +125,18 @@ class OrderDetailView(tk.CTkFrame):
         self.big_title.configure(text=title_text, font=tk.CTkFont(size=title_size, weight='bold'))
 
         info_lines = [
-            f"价格: {food.price_text}",
-            f"等待: {food.wait_text}",
-            f"距离: {food.distance_text}",
-            f"标签: {food.tag_str or '-'}",
-            f"配料: {'、'.join(food.food_component) if food.food_component else '-'}",
+            f"Price: {food.price_text}",
+            f"Wait: {food.wait_text}",
+            f"Distance: {food.distance_text}",
+            f"Tags: {food.tag_str or '-'}",
+            f"Ingredients: {', '.join(food.food_component) if food.food_component else '-'}",
         ]
         if food.extra_price_info:
-            info_lines.append(f"加料: {food.extra_price_info}")
+            info_lines.append(f"Extras: {food.extra_price_info}")
         self.info_body.configure(text='\n'.join(info_lines))
 
         # no dine-in data source yet, but show which dish this is
-        self.dine_body.configure(text=f"• {food.title}\n• 餐厅地址，信息和平衡")
+        self.dine_body.configure(text=f"• {food.title}\n• Restaurant address, info and balance")
         logging.debug(f"{_tag} loaded {food.food_id}, {len(info_lines)} lines, title size {title_size}")
 
     @staticmethod

@@ -60,7 +60,7 @@ class Coupon(BaseModel):
     @property
     def display(self) -> str:
         """Dropdown string and human label, same text."""
-        return f"满{self.threshold}减{self.discount}"
+        return f"spend {self.threshold} save {self.discount}"
 
     def compute(self, total: int) -> int:
         """Actual amount off; 0 when the coupon does not apply."""

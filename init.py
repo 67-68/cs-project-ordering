@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 # values must exist in data/foods.json
 SEARCH_FILTERS = [
     # (data key, label the customer sees, values, simple)
-    ('food_component', 'allergies', ['咖啡因', '牛奶', '水', '花生', '麸质', '虾', '蛋', '燕麦', '坚果'], False),
+    ('food_component', 'allergies', ['caffeine', 'milk', 'water', 'peanut', 'gluten', 'shrimp', 'egg', 'oat', 'nuts'], False),
     ('distance_km', 'distance', ['0', '1', '2', '3', '4', '5', '6'], True),
 ]
 
@@ -153,7 +153,6 @@ class FoodApp(tk.CTk):
             logging.debug(f"{name}: kept {len(kept)}/{len(foods)}")
             foods = kept
 
-        # wipe the previous run, otherwise repeated searches pile up
         for old in self.cards:
             old.destroy()
         self.cards.clear()
