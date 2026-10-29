@@ -55,11 +55,61 @@ class FoodInfo(BaseModel):
         return self.model_dump()
 
 
+class Coupon(BaseModel):
+    """优惠券: 只声明"满多少减多少"这条规则, 计算收在 compute() 里。
+
+    刻意保持两个字段, 不引入 code/过期时间等业务维度 —— UI 层拿到的就是一个可算的模型。
+    """
+
+    threshold: int = 0   # 满多少才可用
+    discount: int = 0    # 满足后减多少
+
+    @property
+    def display(self) -> str:
+        """给顾客看的文案, 同时充当 dropdown 的 values 字符串。"""
+        return f"满{self.threshold}减{self.discount}"
+
+    def compute(self, total: int) -> int:
+        """返回实际减免金额。
+
+        规则:
+          - total 或 discount 非正 -> 视为脏数据, 返回 0;
+          - total 低于门槛 -> 不可用, 返回 0;
+          - 减免额不能把总价减成负数 -> 上限就是 total。
+        """
+        logging.debug(f"[Coupon.compute] entry threshold={self.threshold!r} discount={self.discount!r} total={total!r}")
+
+        if total <= 0:
+            logging.warning(f"[Coupon.compute] branch=empty-total total={total!r}, 无消费可减免")
+            return 0
+        if self.discount <= 0:
+            logging.warning(f"[Coupon.compute] branch=no-discount discount={self.discount!r}")
+            return 0
+        if total < self.threshold:
+            logging.debug(f"[Coupon.compute] branch=below-threshold total={total!r} < threshold={self.threshold!r}")
+            return 0
+
+        cut = min(self.discount, total)
+        logging.debug(f"[Coupon.compute] branch=applied total={total!r} cut={cut!r} payable={total - cut!r}")
+        return cut
+
+
 class AppData(BaseModel):
     foods: list[FoodInfo] = Field(default_factory=list)
+    coupons: list[Coupon] = Field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return self.model_dump()
+
+    def coupon_by_display(self, display: str) -> Coupon | None:
+        """从 dropdown 的字符串反查 Coupon, 找不到返回 None 而不是抛异常。"""
+        logging.debug(f"[AppData.coupon_by_display] entry display={display!r} total={len(self.coupons)}")
+        for coupon in self.coupons:
+            if coupon.display == display:
+                logging.debug(f"[AppData.coupon_by_display] branch=hit display={display!r}")
+                return coupon
+        logging.warning(f"[AppData.coupon_by_display] branch=miss display={display!r}")
+        return None
 
 
 def load_app_data(path: Path | str = DEFAULT_DATA_PATH) -> AppData:
