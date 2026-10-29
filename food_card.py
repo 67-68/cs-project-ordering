@@ -1,20 +1,22 @@
-import customtkinter as tk
 import logging
-from typing import Any, Callable, Tuple
+from typing import Any, Callable
+
+import customtkinter as tk
 
 from food_model import FoodInfo
+
 
 class PolishedFoodCard(tk.CTkFrame):
     @classmethod
     def from_food_info(
         cls,
-        master: Any,  # CTkScrollableFrame 不是 CTkBaseClass 的子类, 用 Any 避免标注撒谎
+        master: Any,  # CTkScrollableFrame is not a CTkBaseClass, so keep it loose
         info: FoodInfo,
         on_order_click: Callable[[int], None],
     ) -> "PolishedFoodCard":
-        """用数据模型直接构造卡片, 避免调用方手工摊开 8 个参数。"""
-        logging.debug(f"[PolishedFoodCard.from_food_info] entry food_id={info.food_id!r} title={info.title!r}")
-        card = cls(
+        """Build straight from the model instead of unrolling 9 args at the call site."""
+        logging.debug(f"card build: {info.food_id} {info.title}")
+        return cls(
             master=master,
             food_id=info.food_id,
             title=info.title,
@@ -26,68 +28,63 @@ class PolishedFoodCard(tk.CTkFrame):
             crowd_color=info.crowd_color,
             on_order_click=on_order_click,
         )
-        logging.debug(f"[PolishedFoodCard.from_food_info] exit food_id={info.food_id!r}")
-        return card
 
     def __init__(
-        self, 
-        master: Any,  # 同上: CTkScrollableFrame / CTkFrame 都能当 master
+        self,
+        master: Any,
         food_id: int,
         title: str,
-        tag_str: str,       # 如: "低咖啡因"
-        wait_mins: int,     # 如: 32 -> "32min"[cite: 2]
-        distance_km: int,   # 如: 32 -> "32km"[cite: 2]
-        base_price: int,    # 如: 32 -> "32¥"[cite: 2]
-        extra_price_info: str, # 如: "to 52$(配料)"[cite: 2]
-        crowd_color: str,   # 拥挤度颜色方块 HEX[cite: 2]
+        tag_str: str,           # e.g. "低咖啡因"
+        wait_mins: int,         # 32 -> "32min"
+        distance_km: int,       # 32 -> "32km"
+        base_price: int,        # 32 -> "32¥"
+        extra_price_info: str,  # e.g. "to 52$(配料)"
+        crowd_color: str,       # crowd badge hex
         on_order_click: Callable[[int], None]
     ):
-        # Level 2 精致度契约：大圆角 (16) + 1px 极细微边框 + 内部呼吸感内边距
+        # big radius + hairline border + inner padding, that's the whole look
         super().__init__(
-            master, 
-            corner_radius=16, 
-            fg_color=("#FFFFFF", "#1E1E24"), 
-            border_width=1, 
+            master,
+            corner_radius=16,
+            fg_color=("#FFFFFF", "#1E1E24"),
+            border_width=1,
             border_color=("#E5E5EA", "#2E2E38")
         )
         self.food_id = food_id
-
         self.on_click: Callable = on_order_click
-        self.grid_columnconfigure((0,2,3), weight=0)
-        self.grid_columnconfigure(1,weight=1)
+
+        self.grid_columnconfigure((0, 2, 3), weight=0)
+        self.grid_columnconfigure(1, weight=1)
+
         clean_title, title_font_size = self._compute_adaptive_title(title)
         self.lbl_title = tk.CTkLabel(
             self, text=clean_title,
-            font=tk.CTkFont(size=title_font_size,weight='bold')
+            font=tk.CTkFont(size=title_font_size, weight='bold')
         )
-        self.lbl_title.grid(row=0,column=0,padx=(16,6),pady=(12,2), sticky='sw')
+        self.lbl_title.grid(row=0, column=0, padx=(16, 6), pady=(12, 2), sticky='sw')
 
         self.lbl_tag = tk.CTkLabel(
-            self, text=tag_str, 
+            self, text=tag_str,
             font=tk.CTkFont(size=13),
-            text_color=("#6C6C70", "#8E8E93") 
+            text_color=("#6C6C70", "#8E8E93")
         )
-
         self.lbl_tag.grid(row=0, column=1, padx=4, pady=(12, 5), sticky="sw")
 
         self.lbl_price = tk.CTkLabel(
-            self, text=f"{base_price}¥", 
+            self, text=f"{base_price}¥",
             font=tk.CTkFont(size=28, weight="bold")
         )
         self.lbl_price.grid(row=0, column=2, padx=12, pady=(12, 0), sticky="se")
 
-
-        # 颜色小方块 (32min 餐厅拥挤度胶囊)
         self.badge_time = tk.CTkLabel(
             self, text=f"{wait_mins}min",
             font=tk.CTkFont(size=12, weight="bold"),
             fg_color=crowd_color, text_color="#FFFFFF",
             corner_radius=6, padx=8, pady=2
         )
-        # sticky="nw" 锁死在左上，绝不会跟旁边的 32km 失散[cite: 2]！
+        # nw anchor keeps it glued next to the distance label
         self.badge_time.grid(row=1, column=0, padx=(16, 6), pady=(4, 12), sticky="nw")
-        
-        # CTkLabel 不接受 row/col/sticky 参数, 位置必须交给 grid()
+
         self.lbl_distance = tk.CTkLabel(master=self, text=str(distance_km))
         self.lbl_distance.grid(row=1, column=1, padx=4, pady=(4, 12), sticky='nw')
 
@@ -102,13 +99,9 @@ class PolishedFoodCard(tk.CTkFrame):
         self.btn_order.grid(row=0, column=3, rowspan=2, padx=(4, 16), pady=12, sticky="ns")
 
     def _compute_adaptive_title(self, raw_title: str) -> tuple[str, int]:
-        """用 O(1) 的阶梯状态机代替蠢爆了的实时像素测量 🤓☝️"""
-        if not raw_title:
-            logging.error(f"[PolishedFoodCard] Empty title for food_id={self.food_id}!")
-            return ("Unknown", 20)
-        return (raw_title, 26) if len(raw_title) <= 5 else (raw_title,20) if len(raw_title) < 8 else (raw_title[:8] + '...',18)
+        """O(1) staircase instead of live pixel measuring."""
+        return (raw_title, 26) if len(raw_title) <= 5 else (raw_title, 20) if len(raw_title) < 8 else (raw_title[:8] + '...', 18)
 
     def _on_btn_pressed(self) -> None:
-        logging.info(f"[B2 Action] Order triggered for food_id={self.food_id}")
-        # 回调签名是 Callable[[int], None], 不传 food_id 会 TypeError
+        logging.info(f"order triggered: {self.food_id}")
         self.on_click(self.food_id)
