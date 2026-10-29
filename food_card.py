@@ -8,7 +8,7 @@ class PolishedFoodCard(tk.CTkFrame):
     @classmethod
     def from_food_info(
         cls,
-        master: "tk.CTkBaseClass",
+        master: Any,  # CTkScrollableFrame 不是 CTkBaseClass 的子类, 用 Any 避免标注撒谎
         info: FoodInfo,
         on_order_click: Callable[[int], None],
     ) -> "PolishedFoodCard":
@@ -31,7 +31,7 @@ class PolishedFoodCard(tk.CTkFrame):
 
     def __init__(
         self, 
-        master: tk.CTkBaseClass, 
+        master: Any,  # 同上: CTkScrollableFrame / CTkFrame 都能当 master
         food_id: int,
         title: str,
         tag_str: str,       # 如: "低咖啡因"
@@ -87,12 +87,12 @@ class PolishedFoodCard(tk.CTkFrame):
         # sticky="nw" 锁死在左上，绝不会跟旁边的 32km 失散[cite: 2]！
         self.badge_time.grid(row=1, column=0, padx=(16, 6), pady=(4, 12), sticky="nw")
         
-        self.lbl_distance = tk.CTkLabel(
-            self, text=str(distance_km),
-            row=1, col=1, sticky='nw'
-        )
+        # CTkLabel 不接受 row/col/sticky 参数, 位置必须交给 grid()
+        self.lbl_distance = tk.CTkLabel(master=self, text=str(distance_km))
+        self.lbl_distance.grid(row=1, column=1, padx=4, pady=(4, 12), sticky='nw')
 
-        self.lbl_extra = tk.CTkLabel(extra_price_info, row=1, col=2, sticky = 'ne')
+        self.lbl_extra = tk.CTkLabel(master=self, text=extra_price_info)
+        self.lbl_extra.grid(row=1, column=2, padx=12, pady=(4, 12), sticky='ne')
 
         self.btn_order = tk.CTkButton(
             self, text="+", width=44, height=44, corner_radius=12,
@@ -110,4 +110,5 @@ class PolishedFoodCard(tk.CTkFrame):
 
     def _on_btn_pressed(self) -> None:
         logging.info(f"[B2 Action] Order triggered for food_id={self.food_id}")
-        self.on_click()
+        # 回调签名是 Callable[[int], None], 不传 food_id 会 TypeError
+        self.on_click(self.food_id)

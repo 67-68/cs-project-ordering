@@ -30,6 +30,7 @@ class FoodInfo(BaseModel):
     base_price: int = 0
     extra_price_info: str = ""
     crowd_color: str = DEFAULT_CROWD_COLOR
+    food_component: list[str] = []
 
     # ---- 派生展示字符串: 只格式化, 不含样式决策 ----
 
