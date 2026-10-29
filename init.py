@@ -2,7 +2,10 @@ from typing import Any, Callable, Tuple
 
 import customtkinter as tk
 import logging
+from food_card import PolishedFoodCard
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
+
+from food_model import AppData, load_app_data
 
 class FoodApp(tk.CTk):
     def __init__(self):
@@ -12,6 +15,11 @@ class FoodApp(tk.CTk):
         self.filters: list[tk.CTkFrame] = []
         self.geometry("600x500")
         self.minsize(480, 380)
+
+        # 先加载数据, 再建 UI: 建 UI 时要用到 self.data.foods
+        logging.debug("[FoodApp.__init__] branch=load-data-before-ui")
+        self.data: AppData = load_app_data()
+        logging.debug(f"[FoodApp.__init__] data loaded, foods={len(self.data.foods)}")
         # 三个 page 都 grid 在同一 cell, 不配置权重的话窗口变大时 page 不会跟着拉伸
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -21,7 +29,14 @@ class FoodApp(tk.CTk):
 
     def _on_filter_changed(self, selected_value: str) -> None:
         logging.debug(f"[build_query] Filter updated: {selected_value}")
-        # ... implementation details: 调用 build_query -> fetch_food_list 刷新列表 ...
+
+    def on_searched(self):
+        logging.debug(f"[on_searched] entry foods={len(self.data.foods)} filters={len(self.filters)}")
+        # 筛选算法
+        
+        
+        # 创建食物卡片
+        for 
 
     def init_pages(self):
         logging.info('start init pages')
@@ -31,7 +46,6 @@ class FoodApp(tk.CTk):
             # 每个 page 自带一圈内边距, 免得控件贴着窗口边缘
             page = tk.CTkFrame(master=self, corner_radius=10)
             page.grid(row=0, column=0, sticky='nsew', padx=12, pady=12)
-            # 注意: page 的子控件全部用 pack 布局, 这里不要再混 grid_rowconfigure
             logging.debug(f"[init_pages] branch=build page index={i}")
 
             top_frame = tk.CTkFrame(master=page, fg_color="transparent")
@@ -85,7 +99,7 @@ class FoodApp(tk.CTk):
         self.add_filter('allergies',['test'],self.search_controls,'top')
         self.location_filter = self.add_filter('location',['test'],self.search_controls,'top',simple=True)
 
-        self.search_button = tk.CTkButton(master=self.search_controls, text='search', height=32)
+        self.search_button = tk.CTkButton(master=self.search_controls, text='search', height=32, command=self.on_searched)
         self.search_button.pack(side='top', fill='x', padx=4, pady=(6, 0))
 
         self.food_list_container = tk.CTkScrollableFrame(
@@ -171,5 +185,3 @@ class SimpleDropdownFrame(tk.CTkFrame):
 
 app = FoodApp()
 app.mainloop()
-
-# TODO: 具体设计食物卡片。

@@ -1,0 +1,44 @@
+{
+  "foods": [
+    {
+      "food_id": 1,
+      "title": "美式咖啡",
+      "tag_str": "低咖啡因",
+      "wait_mins": 8,
+      "distance_km": 1,
+      "base_price": 18,
+      "extra_price_info": "to 26¥(加奶)",
+      "crowd_color": "#34C759"
+    },
+    {
+      "food_id": 2,
+      "title": "拿铁",
+      "tag_str": "",
+      "wait_mins": 15,
+      "distance_km": 2,
+      "base_price": 26,
+      "extra_price_info": "to 32¥(换燕麦奶)",
+      "crowd_color": "#FF9F0A"
+    },
+    {
+      "food_id": 3,
+      "title": "手冲耶加雪菲",
+      "tag_str": "浅烘",
+      "wait_mins": 32,
+      "distance_km": 5,
+      "base_price": 42,
+      "extra_price_info": "",
+      "crowd_color": "#FF3B30"
+    },
+    {
+      "food_id": 4,
+      "title": "冷萃",
+      "tag_str": "冰",
+      "wait_mins": 3,
+      "distance_km": 1,
+      "base_price": 30,
+      "extra_price_info": "",
+      "crowd_color": "#34C759"
+    }
+  ]
+}
