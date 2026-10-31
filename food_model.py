@@ -94,6 +94,56 @@ class AppData(BaseModel):
         return None
 
 
+# 'any' turns the distance criterion off; otherwise the value is a radius in km
+DISTANCE_FIELD = 'distance_km'
+DISTANCE_ANY = 'any'
+
+
+def filter_foods(foods: list[FoodInfo], criteria: dict[str, list[str]]) -> list[FoodInfo]:
+    """Return the foods that survive every active criterion.
+
+    The three field kinds are genuinely different, so each gets its own rule:
+      - list fields (food_component / allergies): a selected value EXCLUDES the food
+      - distance_km: a radius, keeps foods at or under the strictest selected value
+      - anything else: exact string match
+    An empty selection, or 'any' for distance, means that criterion is inactive.
+    """
+    remaining = list(foods)
+    for name, selected in criteria.items():
+        wanted = set(selected)
+        if not wanted:
+            logging.debug(f"filter {name}: inactive, nothing selected")
+            continue
+        if name == DISTANCE_FIELD and DISTANCE_ANY in wanted:
+            logging.debug(f"filter {name}: 'any' selected, inactive")
+            continue
+
+        max_km = None
+        if name == DISTANCE_FIELD:
+            max_km = min(int(v) for v in wanted)
+
+        kept = []
+        for food in remaining:
+            if not hasattr(food, name):
+                # filter_name must match a FoodInfo field
+                logging.error(f"filter {name}: no such field on food {food.food_id}")
+                continue
+            field_value = getattr(food, name)
+            if isinstance(field_value, (list, tuple, set)):
+                # allergies: drop the food if it contains ANY selected allergen
+                matched = not wanted.intersection({str(v) for v in field_value})
+            elif max_km is not None:
+                matched = int(field_value) <= max_km
+            else:
+                # menu values are strings, the model field may not be
+                matched = str(field_value) in wanted
+            if matched:
+                kept.append(food)
+        logging.debug(f"filter {name}: wanted={sorted(wanted)} kept {len(kept)}/{len(remaining)}")
+        remaining = kept
+    return remaining
+
+
 def load_app_data(path: Path | str = DEFAULT_DATA_PATH) -> AppData:
     data_path = Path(path)
     if not data_path.exists():
